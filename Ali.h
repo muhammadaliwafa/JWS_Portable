@@ -170,7 +170,7 @@ void checkAdzan(){
               Serial.print("play surah ke-");
               Serial.println(indexSurah);
               myDFPlayer.playFolder(2, indexSurah);
-              delay(90);
+              delay(1000);
               indexSurah++;
               if(indexSurah>114) indexSurah=0;
 //            }
@@ -179,12 +179,12 @@ void checkAdzan(){
         }
           
       }
-      if(rHar==6){
-        if(selisih<0.333 and selisih > 0 and !mur){
-          myDFPlayer.volume(vol_priority);
-          myDFPlayer.playMp3Folder(4);
-        }        
-      }
+//      if(rHar==6){
+//        if(selisih<0.333 and selisih > 0 and !mur){
+//          myDFPlayer.volume(vol_priority);
+//          myDFPlayer.playMp3Folder(4);
+//        }        
+//      }
     }
 
   }
