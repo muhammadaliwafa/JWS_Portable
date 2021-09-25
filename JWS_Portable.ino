@@ -29,6 +29,8 @@ RtcDS3231<TwoWire> Rtc(Wire);
 uint8_t rTgl;
 uint8_t rBul;
 uint16_t rTah;
+int vol_priority = 15;
+uint8_t vol_ordinary = 10, vol_midnight = 5;
 
 //#include "PrayerTimes.h"
 //#include "Display.h"
@@ -49,6 +51,7 @@ uint16_t rTah;
 
 
 bool enableSettingMode = true;
+
 
 
 

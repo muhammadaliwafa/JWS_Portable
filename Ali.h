@@ -3,8 +3,7 @@ int8_t SholatNow = -1;
 bool azzan = false;
 bool tarhim = false;
 bool mur = false;
-int vol_priority = 15;
-uint8_t vol_ordinary = 10, vol_midnight = 5;
+
 uint8_t stateMinus =0;
 uint8_t indexSurah = 0;
 bool interrupt = false;
