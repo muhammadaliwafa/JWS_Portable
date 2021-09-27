@@ -65,7 +65,7 @@ void setup() {
   LittleFS.begin();
   loadJwsConfig(fileconfigjws, configjws);
   loadAdminConfig(fileconfigadmin, configadmin);
-
+  loadDispConfig(fileconfigdisp, configdisp);
   
   display.init();
   display.flipScreenVertically();
@@ -170,9 +170,10 @@ void setup() {
   updateJWS();
   TanggalHijriah();
   waktuSholatNow();
-  vol_priority = configdisp.cerah;
-  vol_ordinary = 0.3*vol_priority;
-  vol_midnight = 0.15*vol_priority;
+//  vol_priority = configdisp.cerah;
+//  Serial.println(vol_priority);
+//  vol_ordinary = 0.3*vol_priority;
+//  vol_midnight = 0.15*vol_priority;
 }
 
 void loop() {
@@ -202,11 +203,24 @@ void initDF(){
   myDFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   myDFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
   myDFPlayer.volume(5);
-//  myDFPlayer.playFolder(2, 18);//play specific mp3 in SD:/15/004.mp3; Folder Name(1~99); File Name(1~255)
+//  myDFPlayer.playFolder(2, 2);//play specific mp3 in SD:/15/004.mp3; Folder Name(1~99); File Name(1~255)
 //  delay(4000);
 //  myDFPlayer.pause();
   myDFPlayer.playMp3Folder(100);
-//  delay(1000);
+
+
+//  myDFPlayer.volume(10);
+//  myDFPlayer.volume(15);
+//  myDFPlayer.advertise(43);
+  
+//  delay(100);
+//  while(!digitalRead(D7)){delay(100);}
+//  myDFPlayer.volume(5);
+//  myDFPlayer.advertise(43);
+//  delay(10000);
+
+
+//  myDFPlayer.volume(5);
 //  myDFPlayer.start();
 //  delay(2000);
 }

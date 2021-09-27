@@ -155,7 +155,7 @@ void membuatDataAwal() {
 
 
 //======================================================================================================================================================
-  dataawal = "{\"cerah\":\"130\"}";
+  dataawal = "{\"cerah\":\"20\"}";
   error = deserializeJson(doc, dataawal);
 
   File configFileDisp = LittleFS.open(fileconfigdisp, "w");
@@ -294,10 +294,11 @@ void loadDispConfig(const char *fileconfigdisp, ConfigDisp &configdisp) {
   configdisp.cerah = doc["cerah"];
 
   configFileDisp.close();
-  myDFPlayer.volume(configdisp.cerah);
+  
   vol_priority = configdisp.cerah;
-  vol_ordinary = 0.3*vol_priority;
-  vol_midnight = 0.15*vol_priority;
+  vol_ordinary = 0.5*vol_priority;
+  vol_midnight = 0.3*vol_priority;
+  myDFPlayer.volume(vol_priority);
 //  Disp.setBrightness(configdisp.cerah);
 
 }
