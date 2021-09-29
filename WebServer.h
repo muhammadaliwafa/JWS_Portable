@@ -9,7 +9,7 @@ ESP8266WebServer server(80);
 ESP8266HTTPUpdateServer httpUpdater;
 
 // Sebagai Station
-const char* wifissid = "SII"; //kalau gagal konek
+const char* wifissid = "SII2"; //kalau gagal konek
 const char* wifipassword = "Buruanbangun";
 //const char* wifissid = "iP"; //kalau gagal konek
 //const char* wifipassword = "qwerty237";
@@ -32,7 +32,8 @@ void wifiConnect() {
 
   Serial.println("Mencoba sambungan ke Hotspot atau Router");
   WiFi.mode(WIFI_STA);
-  WiFi.begin(wifissid, wifipassword);
+//  WiFi.begin(wifissid, wifipassword);
+  WiFi.begin(configadmin.ssid, configadmin.password);
 //  WiFi.begin(wifissid, wifipassword);
   Serial.println(configadmin.ssid);
   Serial.println(configadmin.password);

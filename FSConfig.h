@@ -37,6 +37,10 @@ struct ConfigJws {
 
 struct ConfigDisp {
   int cerah;
+  int vol_adzan;
+  int murrotal_siang;
+  int murrotal_malam;
+  int hadist;
 };
 
 struct ConfigAdmin{
@@ -155,7 +159,9 @@ void membuatDataAwal() {
 
 
 //======================================================================================================================================================
-  dataawal = "{\"cerah\":\"20\"}";
+
+
+  dataawal = "{\"cerah\":\"20\",\"vol_adzan\":\"15\",\"murrotal_siang\":\"10\"\"murrotal_malam\":\"5\",\"hadist\":\"20\"}";
   error = deserializeJson(doc, dataawal);
 
   File configFileDisp = LittleFS.open(fileconfigdisp, "w");

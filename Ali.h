@@ -124,13 +124,13 @@ void stanbyState(){
   static uint8_t play;
 //  Serial.println(Tmr-lsRn);
   if(digitalRead(D7)){
-     if(floatnow>7.3 && floatnow < 18 && (Tmr-lsRnHadist)>60000){
+     if(floatnow>7.3 && floatnow < 18 && (Tmr-lsRnHadist)>3600000){
       if(play<1){
         myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(6);
         play=1;
         lsRn = Tmr;
-      }else if(play==1 && (Tmr-lsRn)>1000){
+      }else if(play==1 && (Tmr-lsRn)>2000){
         myDFPlayer.playMp3Folder(8);
         myDFPlayer.advertise(findIndex());
         delay(500);
@@ -151,6 +151,26 @@ void stanbyState(){
       if(indexSurah>114) indexSurah=0;
      }
     
+  }
+}
+
+void pauseAfter(uint8_t& setelah_adzan){
+  float selisih = floatnow - stimeFloat[SholatNow];
+  
+  if(SholatNow==1 || SholatNow==5){
+    if(selisih>0.167){
+      azzan = false;
+      Serial.println("adzan false");
+      interrupt = false;
+      setelah_adzan = 0;
+    }
+  }else {
+    if(selisih>0.333){
+      azzan = false;
+      Serial.println("adzan false");
+      interrupt = false;
+      setelah_adzan = 0;
+    }
   }
 }
 
@@ -197,18 +217,15 @@ void setelahAdzan(){
         setelah_adzan = 2;
         lsRn = millis();
       }
-      else if((Tmr-lsRn)>200 && setelah_adzan==2){
-        azzan = false;
-        setelah_adzan = 0;
-  //      stateMinus = 0;
-  //      tarhim = false;
-        Serial.println("adzan false");
-        interrupt = false;
+      else if( setelah_adzan==2){
+        pauseAfter(setelah_adzan);
       }
       
      
    }
 }
+
+
 
 
 
@@ -219,6 +236,8 @@ void checkAdzan(){
     for(int i=0; i<=7; i++){
       if(i==2){
         i+=2;
+      }else if(i==0){
+        i++;
       }
       float selisih = stimeFloat[i] - floatnow;
 //      Serial.println(selisih, 6);
@@ -247,11 +266,11 @@ void checkAdzan(){
           delay(500);
           waktuSholatNow();
           tarhim = false;
-          stateMinus=0;
+//          stateMinus=0;
           return;
       }
       else if(selisih > 0){
-        Serial.println("if dua");
+//        Serial.println("if dua");
 //        if(selisih<0.08194 and !tarhim){
 //          Serial.println("tarhim");
 //          myDFPlayer.volume(vol_priority);
