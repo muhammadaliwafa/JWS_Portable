@@ -186,7 +186,7 @@ void membuatDataAwal() {
   
   }
 
-  dataawal = "{\"latitude\":\"-6.2185009\",\"longitude\":\"107.0070490\",\"zonawaktu\":\"8\",\"hilal\":\"2\",\"ssid\":\"JWS Al-Furqon\",\"password\":\"12345678\",\"batastombol\":\"100\"}";
+  dataawal = "{\"latitude\":\"-6.2185009\",\"longitude\":\"107.0070490\",\"zonawaktu\":\"7\",\"hilal\":\"2\",\"ssid\":\"JWS Al-Furqon\",\"password\":\"12345678\",\"batastombol\":\"100\"}";
   error = deserializeJson(doc, dataawal);
 
   File configFileAdmin = LittleFS.open(fileconfigadmin, "w");
@@ -298,6 +298,11 @@ void loadDispConfig(const char *fileconfigdisp, ConfigDisp &configdisp) {
   }
   
   configdisp.cerah = doc["cerah"];
+  configdisp.vol_adzan = doc["vol_adzan"];
+  configdisp.murrotal_siang = doc["murrotal_siang"];
+  configdisp.murrotal_malam = doc["murrotal_malam"];
+  configdisp.hadist = doc["hadist"];
+
 
   configFileDisp.close();
   
@@ -570,10 +575,21 @@ String XMLDataJWS(){
   Json += String(stimeInt[7][0])+":"+String(stimeInt[7][1])+":"+String(stimeInt[7][2])+"\"";
   Json += ",\"br\":";
   Json += configdisp.cerah;
+  Json += ",\"br\":";
+  Json += configdisp.cerah;
+  Json += ",\"vol_adzan\":";
+  Json += configdisp.vol_adzan;
+  Json += ",\"murrotal_siang\":";
+  Json += configdisp.murrotal_siang;
+  Json += ",\"murrotal_malam\":";
+  Json += configdisp.murrotal_malam;
+  Json += ",\"hadist\":";
+  Json += configdisp.hadist;
   Json += "}";
   return Json;
 
 }
+
 
 String XMLDataAdmin(){
 

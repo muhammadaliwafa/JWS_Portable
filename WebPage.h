@@ -2,6 +2,7 @@
 // HALAMAN WEB UNTUK SETTING JWS
 
 char setwaktu[] PROGMEM = R"=====(
+
 <!DOCTYPE HTML>
 <html>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -328,9 +329,39 @@ char setwaktu[] PROGMEM = R"=====(
     <tr>
         <td>
            <!-- <input type="range" min="0" max="150" id="bright" onchange="setBr()" style="width: 100%;"> -->
+           <label for="bright"><h3>Tester</h3></label>
            <input type="range" min="0" max="30" id="bright" onchange="setBr()" style="width: 100%;">
         </td>
     </tr>
+    <tr>
+      <td>
+        <label for="vol_adzan"><h3>Adzan</h3></label>
+         <!-- <input type="range" min="0" max="150" id="bright" onchange="setBr()" style="width: 100%;"> -->
+         <input type="range" min="0" max="30" id="vol_adzan" onchange="setBr()" style="width: 100%;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="murrotal_siang"><h3>Murrotal Siang</h3></label>
+         <!-- <input type="range" min="0" max="150" id="bright" onchange="setBr()" style="width: 100%;"> -->
+         <input type="range" min="0" max="30" id="murrotal_siang" onchange="setBr()" style="width: 100%;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="murrotal_siang"><h3>Murrotal Malam</h3></label>
+         <!-- <input type="range" min="0" max="150" id="bright" onchange="setBr()" style="width: 100%;"> -->
+         <input type="range" min="0" max="30" id="murrotal_malam" onchange="setBr()" style="width: 100%;">
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <label for="murrotal_siang"><h3>Hadist</h3></label>
+         <!-- <input type="range" min="0" max="150" id="bright" onchange="setBr()" style="width: 100%;"> -->
+         <input type="range" min="0" max="30" id="hadist" onchange="setBr()" style="width: 100%;">
+      </td>
+    </tr>
+  
 </table>
 
 
@@ -402,9 +433,14 @@ function prosesdatajws(){
 
 function setBr(){
     let br = document.getElementById('bright').value
+    let vol_adzan = document.getElementById('vol_adzan').value
+    let murrotal_siang = document.getElementById('murrotal_siang').value
+    let murrotal_malam = document.getElementById('murrotal_malam').value
+    let hadist = document.getElementById('hadist').value
+
     console.log(br)
     
-    let dataJson = {cerah:br}
+    let dataJson = {cerah:br, vol_adzan:vol_adzan, murrotal_siang:murrotal_siang, murrotal_malam:murrotal_malam, hadist:hadist}
 
 
     var xhr = new XMLHttpRequest();
@@ -487,6 +523,11 @@ function handleServerResponseDataJWS(){
    document.getElementById('wsis').innerHTML=myObj.wsis;
 
    document.getElementById('bright').value=myObj.br;
+   document.getElementById('vol_adzan').value=myObj.vol_adzan;
+   document.getElementById('murrotal_siang').value=myObj.murrotal_siang;
+   document.getElementById('murrotal_malam').value=myObj.murrotal_malam;
+   document.getElementById('hadist').value=myObj.hadist;
+  //  document.getElementById('bright').value=myObj.br;
 
  }
  
@@ -588,8 +629,6 @@ function setJws() {
 </script>
 
 </html>
-
-
 
 )=====";
 
