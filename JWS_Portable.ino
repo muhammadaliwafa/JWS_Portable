@@ -170,6 +170,7 @@ void setup() {
   updateJWS();
   TanggalHijriah();
   waktuSholatNow();
+//  reset_Par();
 //  vol_priority = configdisp.cerah;
 //  Serial.println(vol_priority);
 //  vol_ordinary = 0.3*vol_priority;

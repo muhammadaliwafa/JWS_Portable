@@ -56,47 +56,61 @@ void waktuSholatNow() {
 void alertBefore(uint8_t x){
   static uint8_t alarm=x;
   static uint32_t lsRn;
+  static uint8_t lsShltNow;
   uint32_t Tmr=millis();
+  
 //  uint32_t Tmr;
   interrupt = true;
   if(alarm>(x+3))alarm=x; 
-  if((alarm==2 && azzan) ){
+  if((alarm==7 && lsShltNow != SholatNow) ){
     alarm = x;
   }
   
   if(alarm==x+0){
+    
     myDFPlayer.pause();
+    myDFPlayer.volume(configdisp.hadist);
+    Serial.print("volume tarhim");
+    Serial.println(configdisp.hadist);
     switch(SholatNow){
       case 0:
-        myDFPlayer.volume(vol_priority);
+//        myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(x + 6);
         break;
       case 3:
-        myDFPlayer.volume(vol_priority);
+//        myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(x + 7);
         break;
       case 4:
-        myDFPlayer.volume(vol_priority);
+//        myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(x + 8);
         break;
       case 5:
-        myDFPlayer.volume(vol_priority);
+//        myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(x + 9);
         break;
       case 6:
-        myDFPlayer.volume(vol_priority);
+//        myDFPlayer.volume(vol_priority);
         myDFPlayer.playMp3Folder(x + 0);
         break;
     }
     alarm = x+1;
+    Serial.printf("alarm : %02d dan %02d menit sebelum adzan\n", alarm, x);
     lsRn = millis();
 //    delay(100);
   }
-  else if(alarm == x+1 && digitalRead(D7)&&(Tmr-lsRn)>100){
+  else if(alarm == x+1 && digitalRead(D7)&&(Tmr-lsRn)>500){
     Serial.println("tarhim");
-    myDFPlayer.volume(0.9*vol_priority);
+    if(x==5){
+      myDFPlayer.volume(configdisp.vol_adzan);
+    }
+    else{
+      myDFPlayer.volume(0.8*configdisp.vol_adzan);
+    }
     myDFPlayer.playMp3Folder(3);
     alarm = x+2;
+    lsShltNow = SholatNow;
+    Serial.printf("alarm : %02d dan %02d menit sebelum adzan\n", alarm, x);
   }
   
 }
@@ -124,9 +138,9 @@ void stanbyState(){
   static uint8_t play;
 //  Serial.println(Tmr-lsRn);
   if(digitalRead(D7)){
-     if(floatnow>7.3 && floatnow < 18 && (Tmr-lsRnHadist)>3600000){
+     if(floatnow>6 && floatnow < 18 && (Tmr-lsRnHadist)>3600000){
       if(play<1){
-        myDFPlayer.volume(vol_priority);
+        myDFPlayer.volume(configdisp.hadist);
         myDFPlayer.playMp3Folder(6);
         play=1;
         lsRn = Tmr;
@@ -141,7 +155,8 @@ void stanbyState(){
       
      }else if((Tmr-lsRn)>50){
 //      lsRn = Tmr;
-      myDFPlayer.volume(vol_ordinary);
+      if(floatnow>6 && floatnow<18) myDFPlayer.volume(configdisp.murrotal_siang);
+      else myDFPlayer.volume(configdisp.murrotal_malam);
       Serial.print("play surah ke-");
       Serial.println(indexSurah);
       myDFPlayer.playFolder(2, indexSurah);
@@ -158,18 +173,19 @@ void pauseAfter(uint8_t& setelah_adzan){
   float selisih = floatnow - stimeFloat[SholatNow];
   
   if(SholatNow==1 || SholatNow==5){
-    if(selisih>0.167){
+    if(selisih>0.24167){
       azzan = false;
       Serial.println("adzan false");
       interrupt = false;
-      setelah_adzan = 0;
+      setelah_adzan = 10;
     }
   }else {
-    if(selisih>0.333){
+    if(selisih>0.4){
       azzan = false;
       Serial.println("adzan false");
-      interrupt = false;
-      setelah_adzan = 0;
+      if(SholatNow!=6)interrupt = false;
+      setelah_adzan = 10;
+//      interrupt = false;
     }
   }
 }
@@ -181,13 +197,13 @@ void setelahAdzan(){
   if(digitalRead(D7)){//ketika lagu diputar kondisinya LOW
       Tmr = millis();
       if(setelah_adzan<1){
-        myDFPlayer.volume(vol_priority);
+        myDFPlayer.volume(configdisp.hadist);
         myDFPlayer.playMp3Folder(6);
         setelah_adzan = 1;
         lsRn = millis();
       }else
-      if(setelah_adzan==1 && (Tmr-lsRn)>200){
-        myDFPlayer.volume(vol_priority);
+      if(setelah_adzan==1 && (Tmr-lsRn)>2000){
+        myDFPlayer.volume(configdisp.hadist);
         myDFPlayer.playMp3Folder(8);
         switch(SholatNow){
           case 1:
@@ -240,23 +256,15 @@ void checkAdzan(){
         i++;
       }
       float selisih = stimeFloat[i] - floatnow;
-//      Serial.println(selisih, 6);
-//      if(i==0){
-//        Serial.println("if satu");
-//        if(selisih<1 && selisih>0.9898 && digitalRead(D7)){
-//          myDFPlayer.volume(vol_priority);
-//          myDFPlayer.playMp3Folder(4);
-//        }
-//      }
-//      else 
+      
       if(selisih < 0
         and (selisih > -0.03)
         ){
-          Serial.println("if adzan");
+//          Serial.println("if adzan");
           azzan = true;
           Serial.println("adzan 1");
           myDFPlayer.pause();
-          myDFPlayer.volume(0.9*vol_priority);
+          myDFPlayer.volume(configdisp.vol_adzan);
           if(i==1){
             myDFPlayer.playMp3Folder(2);
           }else{
@@ -281,6 +289,7 @@ void checkAdzan(){
 //        }
 //        else 
         if(selisih<0.08333){
+//          Serial.println("5 menit sebelum adzan");
           alertBefore(5);//mainkan sebelum 5 menit
           
         }
