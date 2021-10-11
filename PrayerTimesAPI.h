@@ -131,14 +131,14 @@ void updateWaktuSholatOnline()
 
     intOnline[7][0] = isya.substring(0,2).toInt();
     intOnline[7][1] = isya.substring(3,5).toInt();
-    Serial.println("waktu dzuhur adalah");
-    Serial.printf("%02d : %02d",intOnline[4][0],intOnline[4][1]);
-    Serial.println();
+//    Serial.println("waktu dzuhur adalah");
+//    Serial.printf("%02d : %02d",intOnline[4][0],intOnline[4][1]);
+//    Serial.println();
 
     for(int i = 0; i<=7; i++){
       floatOnline[i] = (float)intOnline[i][0] + (float)intOnline[i][1]/60;
     }
-    Serial.println(floatOnline[4]);
+//    Serial.println(floatOnline[4]);
     
   } else {
     Serial.print(F("deserializeJson() failed: "));

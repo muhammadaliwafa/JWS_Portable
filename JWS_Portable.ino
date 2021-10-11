@@ -1,3 +1,16 @@
+
+
+
+/*
+
+minus alarm
+peringatan dhuha
+syuruq
+peringatan tahajud
+dzuhur masih belum digabung
+
+*/
+
 #include <Wire.h>
 #include<SH1106.h>
 #include <JadwalSholat.h>
@@ -31,6 +44,10 @@ uint8_t rBul;
 uint16_t rTah;
 int vol_priority = 15;
 uint8_t vol_ordinary = 10, vol_midnight = 5;
+bool disable_update = true;
+String ip; 
+bool updt = false;
+//int a = 30;
 
 //#include "PrayerTimes.h"
 //#include "Display.h"
@@ -55,8 +72,10 @@ bool enableSettingMode = true;
 
 
 
-void setup() {
 
+
+void setup() {
+  
   Serial.begin(115200);
 //  pinMode(D7, INPUT);
   initDF();
@@ -73,9 +92,18 @@ void setup() {
   char msg[20];
   sprintf(msg, "%s", "Ali Wafa");
   int max_x = display.getStringWidth(msg);
-  Serial.println();
-  Serial.println();
-  Serial.println(max_x);
+//  Serial.println();
+//  Serial.println();
+//  Serial.println(max_x);
+  int tbl = analogRead(A0);
+  if(tbl<30){
+    updt = true;
+    Serial.print("UPDATE.....");
+    display.setTextAlignment(TEXT_ALIGN_CENTER);
+    display.setFont(ArialMT_Plain_24);
+    display.drawString(64, 18, "UPDATE..");
+    display.display(); 
+  }
 
   if (enableSettingMode) {
     Serial.println("WIFI STARTED");
@@ -144,10 +172,12 @@ void setup() {
 
     server.on("/admin", []() {
       server.send_P(200, "text/html", halamanadmin);
-
-      
-
-
+      if (server.hasArg("en")){
+        String en = server.arg("en");
+        disable_update = en != "1";
+        Serial.print("nilai en adalah ");
+        Serial.println(disable_update);
+      }
     });
 
     server.on("/selaraskan", HTTP_POST, handleSelaraskan);
@@ -170,6 +200,7 @@ void setup() {
   updateJWS();
   TanggalHijriah();
   waktuSholatNow();
+  if(SholatNow==6)interrupt = true;
 //  reset_Par();
 //  vol_priority = configdisp.cerah;
 //  Serial.println(vol_priority);
@@ -179,12 +210,31 @@ void setup() {
 
 void loop() {
   server.handleClient();
+  
   BacaRTC();
+  if(Serial.available()){
+    uint8_t tgl = Serial.parseInt();
+    uint8_t jam = Serial.parseInt();
+    uint8_t menit = Serial.parseInt();
+    uint8_t detik = Serial.parseInt();
+    uint8_t state = Serial.parseInt();
+    
+    Serial.printf("%02d : %02d : %02d \n", jam, menit, detik);
+    if(state){
+      
+      Rtc.SetDateTime(RtcDateTime(2021, 10, tgl, jam, menit, detik));
+//      BacaRTC();
+//      updateJWS();
+//      TanggalHijriah();
+//      waktuSholatNow();
+    }
+    
+  }
   checkAdzan();
   UpdateWaktu();
   display.clear();
   jamNormal(64, 18);
-  display.display();
+  display.display(); 
   kedip();
 }
 
@@ -208,6 +258,9 @@ void initDF(){
 //  delay(4000);
 //  myDFPlayer.pause();
   myDFPlayer.playMp3Folder(100);
+//  myDFPlayer.playMp3Folder(10 + 7);
+//  delay(1000);
+//  myDFPlayer.advertise(44);
 
 
 //  myDFPlayer.volume(10);

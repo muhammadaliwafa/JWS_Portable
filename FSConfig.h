@@ -1,6 +1,6 @@
 // ----------------------
 // FS CONFIG
-
+void waktuSholatNow();
 int detikiqmh;
 int menitiqomah;
 uint8_t tipealarm;
@@ -90,7 +90,9 @@ void updateJWS(){
 //        Longitude = 106.7791, 
 //        Altitude = 45;
 //  
-//  sholatCal(Tahun, Bulan, Tgl, ZonaWaktu, Latitude, Longitude, Altitude); 
+//  sholatCal(Tahun, Bulan, Tgl, ZonaWaktu, Latitude, Longitude, Altitude);
+  char  out[21];
+  Serial.println("----UPDATE JADWAL HARIAN----"); 
   if(online){
     updateWaktuSholatOnline();
     for(int i=0; i<=7; i++){
@@ -98,6 +100,8 @@ void updateJWS(){
       stimeInt[i][0] = intOnline[i][0];
       stimeInt[i][1] = intOnline[i][1];
       stimeInt[i][2] = 0;
+      sprintf(out, "sholat %01d %02d : %02d : %02d", i, stimeInt[i][0], stimeInt[i][1], stimeInt[i][2]);
+      Serial.println(out);
     }
     
   }else{
@@ -118,6 +122,7 @@ void updateJWS(){
       
     }
   }
+  waktuSholatNow();
   
 
 }
@@ -451,6 +456,7 @@ void UpdateWaktu() {
   
   BacaRTC();
   if(lastTgl!=rTgl){
+    Serial.println("beda tanggal jadwal di update");
     updateJWS();
     TanggalHijriah();
     lastTgl=rTgl;

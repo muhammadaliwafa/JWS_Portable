@@ -3,16 +3,20 @@ int8_t SholatNow = -1;
 bool azzan = false;
 bool tarhim = false;
 bool mur = false;
+uint8_t alarm_pagi = 0;
 
 uint8_t stateMinus =0;
 uint8_t indexSurah = 0;
 bool interrupt = false;
+
+uint8_t folder = 2;
 
 
 
 
 void jamNormal(uint8_t x, uint8_t y) {
   char buff[8];
+  char cip[15];
   if (kdp) {
     sprintf(buff, "%02d:%02d:%02d", rJam, rMen, rDet);
   }
@@ -23,6 +27,15 @@ void jamNormal(uint8_t x, uint8_t y) {
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_24);
   display.drawString(x, y, buff);
+  display.setFont(ArialMT_Plain_10);
+  if(online){
+    display.drawString(20, 5, "online");
+  }
+  else{
+    display.drawString(20, 5, "offline");
+  }
+//  ip.toCharArray(cip, 15);
+  display.drawString(64, 53, ip);
 //  Disp.drawText(x, y, buff);
 
 }
@@ -41,10 +54,15 @@ void kedip() {
 }
 
 void waktuSholatNow() {
+  SholatNow = 0;
   for (int i = 7; i >= 0; i--) {
-    Serial.println(stimeFloat[i] );
+    
     if (floatnow > stimeFloat[i]) {
-      SholatNow = i;
+      Serial.println("update wakyu");
+      Serial.print(floatnow);
+      Serial.print("\t");
+      Serial.println(stimeFloat[i]);
+      SholatNow = i;// kalo 0 itu adalah waktu imsyak cuy, sedangkan waktu imsyak itu adalah sebelum 
       break;
     }
   }
@@ -63,6 +81,9 @@ void alertBefore(uint8_t x){
   interrupt = true;
   if(alarm>(x+3))alarm=x; 
   if((alarm==7 && lsShltNow != SholatNow) ){
+    Serial.println("reset alarm dipanggil");
+    waktuSholatNow();
+    lsShltNow = SholatNow;
     alarm = x;
   }
   
@@ -75,23 +96,29 @@ void alertBefore(uint8_t x){
     switch(SholatNow){
       case 0:
 //        myDFPlayer.volume(vol_priority);
+        Serial.printf("play sebelum (%02)\n", x+6);
         myDFPlayer.playMp3Folder(x + 6);
         break;
       case 3:
 //        myDFPlayer.volume(vol_priority);
+        
+        Serial.printf("play sebelum (%02)\n", x+7);
         myDFPlayer.playMp3Folder(x + 7);
         break;
       case 4:
 //        myDFPlayer.volume(vol_priority);
+        Serial.printf("play sebelum (%02)\n", x+8);
         myDFPlayer.playMp3Folder(x + 8);
         break;
       case 5:
 //        myDFPlayer.volume(vol_priority);
+        Serial.printf("play sebelum (%02)\n", x+9);
         myDFPlayer.playMp3Folder(x + 9);
         break;
       case 6:
 //        myDFPlayer.volume(vol_priority);
-        myDFPlayer.playMp3Folder(x + 0);
+        Serial.printf("play sebelum (%02)\n", x+10);
+        myDFPlayer.playMp3Folder(x + 10);
         break;
     }
     alarm = x+1;
@@ -159,11 +186,15 @@ void stanbyState(){
       else myDFPlayer.volume(configdisp.murrotal_malam);
       Serial.print("play surah ke-");
       Serial.println(indexSurah);
-      myDFPlayer.playFolder(2, indexSurah);
+      myDFPlayer.playFolder(folder, indexSurah);
       delay(80);
       lsRn = Tmr;
       indexSurah++;
-      if(indexSurah>114) indexSurah=0;
+      if(indexSurah>114) {
+        folder ++;
+        if(folder>2)folder=1;
+        indexSurah=0;
+      }
      }
     
   }
@@ -177,14 +208,14 @@ void pauseAfter(uint8_t& setelah_adzan){
       azzan = false;
       Serial.println("adzan false");
       interrupt = false;
-      setelah_adzan = 10;
+      setelah_adzan = 0;
     }
   }else {
     if(selisih>0.4){
       azzan = false;
       Serial.println("adzan false");
       if(SholatNow!=6)interrupt = false;
-      setelah_adzan = 10;
+      setelah_adzan = 0;
 //      interrupt = false;
     }
   }
@@ -215,7 +246,7 @@ void setelahAdzan(){
             Serial.println("diputar");
   //              myDFPlayer.advertise(41);
   //              myDFPlayer.advertise(43);
-            myDFPlayer.advertise(43);
+            myDFPlayer.advertise(44);
             break;
           case 5:
 //            myDFPlayer.volume(vol_priority);
@@ -233,12 +264,40 @@ void setelahAdzan(){
         setelah_adzan = 2;
         lsRn = millis();
       }
-      else if( setelah_adzan==2){
+      else if(setelah_adzan==2){
         pauseAfter(setelah_adzan);
       }
       
      
    }
+}
+
+void alert_alarm(){ // putar alarm berulang-ulang,
+  
+  static uint8_t lastTgl;
+  if(analogRead(A0)<30){
+    Serial.println("tombol dipencet");
+    myDFPlayer.pause();
+    alarm_pagi=3;
+  }
+  if(rTgl!=lastTgl){
+    lastTgl=rTgl;
+    alarm_pagi=0;
+  }
+  if(alarm_pagi==0){
+    myDFPlayer.volume(configdisp.vol_adzan);
+    myDFPlayer.playMp3Folder(8);
+    delay(200);
+    alarm_pagi++;
+  }
+  else if(digitalRead(D7)){
+    myDFPlayer.volume(configdisp.vol_adzan);
+    myDFPlayer.playMp3Folder(8);
+    delay(200);
+  }
+    
+ 
+  
 }
 
 
@@ -267,6 +326,7 @@ void checkAdzan(){
           myDFPlayer.volume(configdisp.vol_adzan);
           if(i==1){
             myDFPlayer.playMp3Folder(2);
+            alarm_pagi = true;
           }else{
             myDFPlayer.playMp3Folder(1);
           }
@@ -278,33 +338,28 @@ void checkAdzan(){
           return;
       }
       else if(selisih > 0){
-//        Serial.println("if dua");
-//        if(selisih<0.08194 and !tarhim){
-//          Serial.println("tarhim");
-//          myDFPlayer.volume(vol_priority);
-//          myDFPlayer.playMp3Folder(3);
-//          delay(500);
-//          tarhim = true;
-//          return;
-//        }
-//        else 
         if(selisih<0.08333){
 //          Serial.println("5 menit sebelum adzan");
           alertBefore(5);//mainkan sebelum 5 menit
           
         }
-        else if(selisih<0.167){
+        else if(selisih<0.167){//10 menit sebelum sholat
           alertBefore(10);
           
+        }
+        else if(floatnow > 3.50 && (alarm_pagi<2) && floatnow<3.5167){
+          alert_alarm();
         }
         else if(!interrupt){
             stanbyState();
         }
           
       }
-      else if(!interrupt){
+      
+      else if(!interrupt){//waktu antara isya dan shubuh
           stanbyState();
       }
+//      Serial.println(floatnow);
     }
 
   }

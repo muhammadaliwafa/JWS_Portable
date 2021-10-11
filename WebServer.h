@@ -2,25 +2,29 @@
 // WIFI
 
 // LED Internal
-//uint8_t pin_led = 2;
+uint8_t pin_led = 2;
 
 //WEB Server
 ESP8266WebServer server(80);
 ESP8266HTTPUpdateServer httpUpdater;
 
 // Sebagai Station
-const char* wifissid = "SII"; //kalau gagal konek
+const char* wifissid = "MEGALIMIN"; //kalau gagal konek
 const char* wifipassword = "Buruanbangun";
 //const char* wifissid = "iP"; //kalau gagal konek
 //const char* wifipassword = "qwerty237";
 
 // Sebagai AccessPoint
-const char* ssid = "JWS Al-Furqon"; //kalau gagal konek
-const char* password = "12345678";
+const char* ssid = "JWS"; //kalau gagal konek
+const char* password = "bismillah";
 
 IPAddress local_ip(192, 168, 4, 1);
 IPAddress gateway(192, 168, 4, 1);
 IPAddress netmask(255, 255, 255, 0);
+
+
+
+
 
 
 
@@ -29,57 +33,81 @@ void wifiConnect() {
   WiFi.softAPdisconnect(true);
   WiFi.disconnect();
   delay(1000);
-
-  Serial.println("Mencoba sambungan ke Hotspot atau Router");
-  WiFi.mode(WIFI_STA);
-//  WiFi.begin(wifissid, wifipassword);
-  WiFi.begin(configadmin.ssid, configadmin.password);
-//  WiFi.begin(wifissid, wifipassword);
-  Serial.println(configadmin.ssid);
-  Serial.println(configadmin.password);
-  
-  unsigned long startTime = millis();
-  
-  while (WiFi.status() != WL_CONNECTED) {
+  if(!updt){
+    Serial.println("Mencoba sambungan ke Hotspot atau Router");
+    WiFi.mode(WIFI_STA);
+  //  if (!WiFi.config(local_ip, gateway)) {
+  //    Serial.println("STA Failed to configure");
+  //  }
+    WiFi.begin(wifissid, wifipassword);
+  //  WiFi.begin(configadmin.ssid, configadmin.password);
+  //  WiFi.begin(ssid, password);
+    Serial.println(configadmin.ssid);
+    Serial.println(configadmin.password);
     
-    delay(500);
-    Serial.print(".");
+    unsigned long startTime = millis();
     
-//    digitalWrite(pin_led, !digitalRead(pin_led));
-    
-    if (millis() - startTime > 10000) {
-      Serial.println(" ");
-      break;
+    while (WiFi.status() != WL_CONNECTED) {
+      
+      delay(500);
+      Serial.print(".");
+      
+      digitalWrite(pin_led, !digitalRead(pin_led));
+      
+      if (millis() - startTime > 10000) {
+        Serial.println(" ");
+        break;
+      }
+      
     }
     
-  }
+    if (WiFi.status() == WL_CONNECTED) {
+      online = true;
+      digitalWrite(pin_led, LOW);
+      Serial.print("MAC: ");
+      Serial.println(WiFi.macAddress());
+      Serial.print("IP: ");
+      Serial.println(WiFi.localIP());
+      ip = WiFi.localIP().toString();
+  //    ip = ssid;
+  //    display.setTextAlignment(TEXT_ALIGN_CENTER);
+  //    display.setFont(ArialMT_Plain_24);
+  //    display.drawString(128, 5, ip);
+      Serial.println(ip);
+      setupAPI();
+      
+    } else {
+      
+      Serial.println("Gagal tersambung ke Hotspot, mode Hotspot aktif.");
+      
+      WiFi.mode(WIFI_AP);
+      WiFi.softAPConfig(local_ip, gateway, netmask);
+  //    WiFi.softAP(configadmin.ssid, configadmin.password);
+      WiFi.softAP(ssid, password);
+      
+  //    digitalWrite(pin_led, LOW);
   
-  if (WiFi.status() == WL_CONNECTED) {
-    online = true;
-//    digitalWrite(pin_led, HIGH);
-    Serial.print("MAC: ");
-    Serial.println(WiFi.macAddress());
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
-    setupAPI();
-    
-  } else {
-    
+      Serial.print("MAC: ");
+      Serial.println(WiFi.macAddress());
+      Serial.print("IP: ");
+      Serial.println(local_ip);
+      ip = "192.168.4.1";
+      
+    }
+  }else{
     Serial.println("Gagal tersambung ke Hotspot, mode Hotspot aktif.");
     
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(local_ip, gateway, netmask);
-    WiFi.softAP(configadmin.ssid, configadmin.password);
-//    WiFi.softAP(ssid, password);
-    
-//    digitalWrite(pin_led, LOW);
-
+//    WiFi.softAP(configadmin.ssid, configadmin.password);
+    WiFi.softAP(ssid, password);
     Serial.print("MAC: ");
     Serial.println(WiFi.macAddress());
     Serial.print("IP: ");
     Serial.println(local_ip);
-    
+    ip = "192.168.4.1";
   }
+  
 
 }
 
