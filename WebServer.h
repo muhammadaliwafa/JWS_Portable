@@ -39,8 +39,8 @@ void wifiConnect() {
   //  if (!WiFi.config(local_ip, gateway)) {
   //    Serial.println("STA Failed to configure");
   //  }
-    WiFi.begin(wifissid, wifipassword);
-  //  WiFi.begin(configadmin.ssid, configadmin.password);
+//    WiFi.begin(wifissid, wifipassword);
+    WiFi.begin(configadmin.ssid, configadmin.password);
   //  WiFi.begin(ssid, password);
     Serial.println(configadmin.ssid);
     Serial.println(configadmin.password);

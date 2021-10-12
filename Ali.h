@@ -286,13 +286,13 @@ void alert_alarm(){ // putar alarm berulang-ulang,
   }
   if(alarm_pagi==0){
     myDFPlayer.volume(configdisp.vol_adzan);
-    myDFPlayer.playMp3Folder(8);
+    myDFPlayer.playMp3Folder(9);
     delay(200);
     alarm_pagi++;
   }
   else if(digitalRead(D7)){
     myDFPlayer.volume(configdisp.vol_adzan);
-    myDFPlayer.playMp3Folder(8);
+    myDFPlayer.playMp3Folder(9);
     delay(200);
   }
     
